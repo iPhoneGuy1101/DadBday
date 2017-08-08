@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Phy6</title>
+	<style>
+	*{font-size: 125%;}
+	</style>
+	<script>if(window.innerWidth > window.innerHeight) alert("Rotate your phone to be vertical and enable rotation lock for best results!");
+var sound = document.createElement('audio');
+sound.src='pop.mp3'
+	window.onerror = function(a,b,c,d,e,f){
+		return confirm("Error: \n"+[a,b,c,d,e,f].join('\n')+"\n\nContinue?");
+	};
+	var gravity = {x: 0, y: 0, z: 0};
+
+	var canvas = document.createElement('canvas'); //STRING
+	var context = canvas.getContext('2d');
+	canvas.style.width = '100vw';
+	canvas.style.height= '100vh';
+	canvas.style.left  = '0';
+	canvas.style.top   = '0';
+	canvas.margin = '0';
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	function line(pos1, pos2){
+		context.beginPath();
+		context.strokeStyle = 'black';
+		context.strokeWeight = '4px';
+		context.moveTo(pos1.x, pos1.y+(pos1.size/3));
+		context.lineTo(pos2.x, pos2.y);
+		context.stroke();
+		context.closePath();
+	};
+
+
+	// if(window.innerWidth > window.innerHeight) window.close();
+	var rotation = function(e){
+		gravity = e.accelerationIncludingGravity;
+		if(gravity.x==gravity.y) gravity = {x: 0, y: -4};
+	};
+	var ball = []
+	function Ball(){
+		this.x = window.innerWidth / 2;
+		this.y = window.innerHeight / 2;
+		this.velX = Math.random()*32-16;
+		this.velY = Math.random()*8-4;
+		this.size = Math.random()*20+40;
+		this.applyForce = function(force){
+			this.velX -= force.x / 2.25 / this.m;
+			this.velY += force.y / 4 / this.m;
+			if(this.y > window.innerHeight - this.n - this.size || this.y < this.n + this.size) this.velY = (this.velY)==(((this.y<window.innerHeight/2)?1:-1)*Math.abs(this.velY))?this.velY:0;
+			if(this.x < this.o + this.size || this.x > window.innerWidth - this.o - this.size) this.velX = (this.velX)==(((this.x<window.innerWidth/2)?1:-1)*Math.abs(this.velX))?this.velX:0;
+			return 0;
+		};
+		this.m = 0.5 + (this.size/48)
+		this.n = Math.random()*window.innerHeight/2.5
+		this.o = Math.random()*window.innerWidth/2
+		this.update = function(){
+			this.htmlElement.style.left = (this.x - this.size / 2) + 'px';
+			this.htmlElement.style.top = (this.y - this.size / 2) + 'px';
+			this.x+=this.velX/8;
+			this.y+=this.velY/8;
+			line(this, {x:window.innerWidth/2,y:window.innerHeight/2});
+		};
+		this.colour = newColour();
+		this.htmlElement = document.createElement("DIV");
+		var styles = {
+			background: this.colour,
+			left: (this.x - this.size / 2) + 'px',
+			top: (this.y - this.size / 2) + 'px',
+			width: this.size + 'px',
+			height: this.size + 'px',
+			borderRadius: '64px',
+			padding: this.size / 2 + 'px',
+			position: 'absolute'
+		};
+		for(var s in styles) {
+			this.htmlElement.style[s] = styles[s];
+		};
+		// alert(this.htmlElement);
+		this.htmlElement.onclick = function(){
+			event.preventDefault();
+			this.htmlElement.style.display = 'none';
+			this.update = function(){};
+			this.applyForce = function(){};
+			if(sound)sound.pause();
+			sound.playbackRate = Math.random()+Math.random();
+			sound.mozPreservesPitch = false;
+			sound.webkitPreservesPitch = false;
+			sound.PreservesPitch = false;
+			if(sound)sound.currentTime = 0;
+			if(sound)sound.play();
+		}.bind(this);
+		this.htmlElement.ontouchstart = function(){
+			event.preventDefault();
+			this.htmlElement.style.display = 'none';
+			this.update = function(){};
+			this.applyForce = function(){};
+			if(sound)sound.pause();
+			sound.playbackRate = Math.random()+0.35;
+			sound.mozPreservesPitch = false;
+			sound.webkitPreservesPitch = false;
+			sound.PreservesPitch = false;
+			if(sound)sound.currentTime = 0;
+			if(sound)sound.play();
+		}.bind(this);
+		this.htmlElement.ontouchdown = function(){
+			event.preventDefault();
+			this.htmlElement.style.display = 'none';
+			this.update = function(){};
+			this.applyForce = function(){};
+			if(sound)sound.pause();
+			sound.playbackRate = Math.random()+0.35;
+			sound.mozPreservesPitch = false;
+			sound.webkitPreservesPitch = false;
+			sound.PreservesPitch = false;
+			if(sound)sound.currentTime = 0;
+			if(sound)sound.play();
+		}.bind(this);
+		document.body.appendChild(this.htmlElement);
+	};
+	function newColour(){
+		var r = Math.random.bind(Math), c = [Math.round(r()*255),Math.round(r()*255),Math.round(r()*255)];
+		return 'rgb('+c.join()+')';
+	};
+	var f = 0;
+	function frame(e){f++;
+		if(f == Math.round((1000/35)*1)||f == Math.round((1000/35)*2)||f == Math.round((1000/35)*3)||
+			f == Math.round((1000/35)*4)||f == Math.round((1000/35)*5)||f == Math.round((1000/35)*6)) {
+			var a = document.createElement('h1');
+			document.body.appendChild(a);
+			a.style.top = '48%';
+			a.style.left = '48%'
+			a.style.position = 'absolute';
+			a.style.color = 'lightblue';
+			a.style.background = 'rgba(0,0,0,0.3)';
+			a.innerHTML = 'Happy Birthday<br/>Mom! :)'
+		}
+		if(f == Math.round((1000/35)*5)||f == Math.round((1000/35)*6)||f == Math.round((1000/35)*7)||
+			f == Math.round((1000/35)*8)||f == Math.round((1000/35)*9)||f == Math.round((1000/35)*10)
+			) {
+			var a = document.createElement('h2');
+			document.body.appendChild(a);
+			a.style.top = '56%';
+			a.style.left = '34%'
+			a.style.position = 'absolute';
+			a.style.color = 'lightblue';
+			a.style.background = 'rgba(0,0,0,0.3)';
+			a.innerHTML = 'These are latex balloons,<br/>so they float upwards.<br/>Tilt you device!'
+		}
+		// console.log(gravity);
+		context.clearRect(0,0,canvas.width,canvas.height)
+		for (var i = ball.length - 1; i >= 0; i--) {
+			ball[i].applyForce(gravity);
+			ball[i].update();
+		}
+		// if(Math.random()>=0.98)alert(gravity.x)
+		setTimeout(frame, 1000/60);
+	};
+	window.onload = function(){
+		more();more();more();
+		document.body.style.margin = '0';
+		document.body.style.padding = '0';
+		document.body.style.overflow = 'hidden';
+		document.body.appendChild(canvas);
+		frame();
+	}
+	window.ondevicemotion = rotation;
+
+
+	function more(){
+		for (var i = 7; i >= 0; i--) {
+			ball.push(new Ball());
+		}
+	};
+
+
+	</script>
+</head>
+<body style='overflow: hidden'>
+	<!--Content generated by JS for simplicity and 'portability'-->
+	<button onclick='more()' style='right: 0; bottom: 0; font-size: 48px; padding: 16px; position: absolute'>Add more balloons</button>
+</body>
+</html>
